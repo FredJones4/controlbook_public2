@@ -25,3 +25,4 @@ def main():
     print('Close window to end program')
     plt.show()
 
+main()
