@@ -1,8 +1,17 @@
+import sys
+import os
+# Get the directory one level above
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# Add it to sys.path
+sys.path.insert(0, parent_dir)
 # use this file to test your dynamics file
 import numpy as np
-from hw3_ans.massDynamics import massDynamics as dynamics
-import massParam as P
+from blockBeamDynamics import blockBeamDynamics as dynamics
+import blockbeamParam as P
 import testCases as TC
+
+
 
 # define test parameters
 P.Ts = .01
