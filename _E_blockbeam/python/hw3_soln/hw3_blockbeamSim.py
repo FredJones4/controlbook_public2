@@ -34,7 +34,7 @@ while t < P.t_end:  # main simulation loop
     while t < t_next_plot:  # updates control and dynamics at faster simulation rate
         r = reference.square(t)
         u = force.sin(t)
-        y = blockBeam.update(5)  # Propagate the dynamics
+        y = blockBeam.update(u)  # Propagate the dynamics
         t = t + P.Ts  # advance time by Ts
 
     # update animation and data plots
