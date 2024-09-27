@@ -1,4 +1,3 @@
-#TODO: get package for 2024Winter version.
 import matplotlib.pyplot as plt
 import numpy as np
 import hummingbirdParam as P
