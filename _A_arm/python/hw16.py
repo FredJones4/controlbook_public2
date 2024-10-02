@@ -27,3 +27,7 @@ if __name__ == '__main__':
     plt.legend(['P(s)', 'C(s)P(s)'])
     print('Close plot window to end program')
     plt.show()
+
+    mag, phase, omegas = bode([Plant*C_pid], [0.4])
+
+    print(mag)

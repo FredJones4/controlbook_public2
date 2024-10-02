@@ -28,3 +28,4 @@ if __name__ == '__main__':
     print('Close window to end program')
     plt.show()
 
+main()
