@@ -83,7 +83,7 @@ dotprint(eq_solve_dict)
 # 2. $\dot{z}_e = 0$
 # 3. $F_e = kz_e$
 # 
-# This matches the information given in the problem statement.
+# The system is already linear!
 
 # %% [markdown]
 # ## A and B Matrices

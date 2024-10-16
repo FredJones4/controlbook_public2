@@ -5,10 +5,13 @@ from signalGenerator import SignalGenerator
 from hummingbirdAnimation import HummingbirdAnimation
 from dataPlotter import DataPlotter
 from hummingbirdDynamics import HummingbirdDynamics
+from ctrlEquilibrium import ctrlEquilibrium
 
-
-# instantiate the hummingbird dyanmics
+# instantiate pendulum, controller, and reference classes
 hummingbird = HummingbirdDynamics(alpha=0.0)
+controller = ctrlEquilibrium()
+theta_ref = SignalGenerator(amplitude=0.5, frequency=0.02)
+psi_ref = SignalGenerator(amplitude=0.5, frequency=-0.02)
 
 # instantiate the simulation plots and animation
 dataPlot = DataPlotter()
@@ -16,20 +19,17 @@ animation = HummingbirdAnimation()
 
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
-
     # Propagate dynamics at rate Ts
     t_next_plot = t + P.t_plot
     while t < t_next_plot:
         ref = np.array([[0.], [0.], [0.]])
-        pwm_right = 0.38
-        pwm_left = 0.38
-        u = np.array([[pwm_left], [pwm_right]])
+        u = controller.update(hummingbird.state)
         y = hummingbird.update(u)  # Propagate the dynamics
         t = t + P.Ts  # advance time by Ts
 
     # update animation and data plots at rate t_plot
     animation.update(t, hummingbird.state)
-    dataPlot.update(t, hummingbird.state, u, ref)
+    dataPlot.update(t, hummingbird.state,u, ref)
 
     # the pause causes figure to be displayed during simulation
     plt.pause(0.05)

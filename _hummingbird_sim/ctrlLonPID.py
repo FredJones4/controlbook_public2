@@ -5,15 +5,15 @@ import hummingbirdParam as P
 class ctrlLonPID:
     def __init__(self):
         # tuning parameters
-        tr_pitch = 
-        zeta_pitch = 
-        self.ki_pitch = 
+        tr_pitch = 0.4   # rise time for pitch
+        zeta_pitch = 0.707 # damping ratio for pitch
+        self.ki_pitch = 0.2
         # gain calculation
         b_theta = P.ellT/(P.m1 * P.ell1**2 + P.m2 * P.ell2**2 + P.J1y + P.J2y)
-        #print('b_theta: ', b_theta)
-        wn_pitch = 
-        self.kp_pitch = 
-        self.kd_pitch = 
+        print('b_theta: ', b_theta)
+        wn_pitch = 2.2 / tr_pitch  # natural frequency for pitch
+        self.kp_pitch = wn_pitch**2 / b_theta  
+        self.kd_pitch = 2 * zeta_pitch * wn_pitch / b_theta  
         # print gains to terminal
         print('kp_pitch: ', self.kp_pitch)
         print('ki_pitch: ', self.ki_pitch)
@@ -29,26 +29,33 @@ class ctrlLonPID:
         self.integrator_theta = 0.
         self.error_theta_d1 = 0.  # pitch error delayed by 1
 
-    def update(self, r: np.ndarray, y: np.ndarray):
+    def update(self, r, y):
         theta_ref = r[0][0]
         theta = y[1][0]
-        force_fl = 
+        force_fl = P.g * (P.m1 * P.ell1 + P.m2 * P.ell2) * np.cos(theta) / P.ellT
         # compute errors
-        error_theta = 
+        error_theta = theta_ref - theta
         # update differentiators
-        self.theta_dot = 
-        
+        self.theta_dot = self.beta * self.theta_dot \
+                       + (1 - self.beta) * ((theta - self.theta_d1) / self.Ts)
         # update integrators
-        self.integrator_theta = 
-        
+        self.integrator_theta = self.integrator_theta \
+                                + (self.Ts/2)*(error_theta + self.error_theta_d1)
         # pitch control
-        force_unsat = 
+        force_unsat = force_fl \
+                      + self.kp_pitch * error_theta \
+                      + self.ki_pitch * self.integrator_theta \
+                      - self.kd_pitch * self.theta_dot
         force = saturate(force_unsat, -P.force_max, P.force_max)
         torque = 0.
         # convert force and torque to pwm signals
         pwm = np.array([[force + torque / P.d],               # u_left
                       [force - torque / P.d]]) / (2 * P.km)   # r_right          
         pwm = saturate(pwm, 0, 1)
+        # integrator anti-windup
+        if self.ki_pitch != 0.0:
+            self.integrator_theta = self.integrator_theta \
+                                    + self.Ts * (force - force_unsat) / self.ki_pitch
         # update all delayed variables
         self.theta_d1 = theta
         self.error_theta_d1 = error_theta

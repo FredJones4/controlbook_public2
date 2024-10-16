@@ -60,8 +60,28 @@ equilibrium_equation = state_deriv.subs({z_dot: 0, theta_dot: 0, theta: 0})
 eq_solve_dict = solve(equilibrium_equation, (z, F), simplify=True, dict=True)[0]
 dotprint(eq_solve_dict)
 
+# Define symbols
+m1, m2, ell, g, F, z, ze = symbols('m_1 m_2 ell g F z ze')
+
+# Original equation (solution from eq_solve_dict)
+# z = (ell * (2F - g*m2)) / (2*g*m1)
+equation = Eq(z, (ell * (2*F - g*m2)) / (2*g*m1))
+# %%
+# Solve for F
+u_eq = solve(equation, F)[0]
+print("u_eq = ")
+dotprint(u_eq.subs(z,ze))
+
+
 # %% [markdown]
+# ---
+# The solution for $u_{eq}$ (or **F**) comes from solving the equation above. The equilibrium point is the value of **F** at which the system's derivatives (velocities and accelerations) are zero, meaning the system is at rest.
+# 
+# Here, $z_e$ is the equilibrium position. This expression shows that the equilibrium force depends on both the gravitational forces acting on the masses $m_1$ and $m_2$, as well as the equilibrium position $z_e$ scaled by the length $\ell$.
+
 # We can see that at equilibrium, $z$ can be any value (which we'll call $z_e$), and $F$ depends on this $z_e$.
+
+
 
 # %%
 z_e = symbols('z_e')
