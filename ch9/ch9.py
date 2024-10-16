@@ -1,5 +1,5 @@
 #%%
-#TODO: Fix the issue where derivation on p127 is not as it shows ... it's what cost me on a test last year.
+# NOTE: This can be run as a Jupyter Notebook in VSCode.
 import sympy as sp
 def calculate_system_type_by_denominator(den_expr: sp.core.mul.Mul):
     """
